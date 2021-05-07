@@ -1,1 +1,1 @@
-web: waitress-serve --port=8000 coviassist.wsgi:application
+web: waitress-serve --port=$PORT coviassist.wsgi:application
