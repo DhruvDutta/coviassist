@@ -5,7 +5,7 @@
         <form method="POST" onsubmit="return validate()">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">Blog Post</legend>
+                <legend class="border-bottom mb-4">New Post</legend>
                 {{ form|crispy }}
             </fieldset>
             <fieldset>
@@ -51,8 +51,6 @@
                     var maxSize = 32154
                     size = this.files[0].size;
                     isOk = maxSize > size;
-                    console.log(size)
-                    console.log(isOk)
                     return isOk;
                 }
             });
