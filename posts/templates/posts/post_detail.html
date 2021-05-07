@@ -1,0 +1,116 @@
+{% extends "posts/base.html" %}
+{% block content %}
+  <article class="media content-section col-lg-8">
+    
+    <div class="media-body">
+      <div class="article-metadata">
+        <a class="mr-2" href="#">{{ object.author }}</a>
+        <small class="text-muted">{{ object.date_posted|date:"F d, Y" }}</small>
+        {% if object.author == user %}
+          <div>
+            <a class="btn btn-outline-secondary btn-sm mt-1 mb-1 udbtn" href="{% url 'post-update' object.id %}" style="border-radius: 0.7em;">Update</a>
+            <a class="btn btn-outline-danger btn-sm mt-1 mb-1 udbtn" href="{% url 'post-delete' object.id %}" style="border-radius: 0.7em;">Delete</a>
+          </div>
+        {% endif %}
+      </div>
+      <h2 class="article-title">{{ object.title }}</h2>
+      <p class="article-content">{{ object.content }}</p>
+      <img class="article-img detail-img" >
+      
+    </div>
+    <p class="article-content float-right pno">Contact No: {{ object.phone_number }}</p>
+  </article>
+
+{% endblock content %}
+{% block chatbox %}
+<div class="col-lg-4">
+  <div class="content-section">
+    <h3>Comments</h3>
+    <div class="" id="chatbox" >
+      <div id="msgs"></div>
+      <div class="chatinput row p-2" >
+        <input type="text" id="input_msg">
+        <div id="send" class="btn-sm btn-dark" onclick="send_msg('{{ object.author }}','{{ user.username }}','{{ object.pk }}')">
+          <i class="fa fa-paper-plane"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+<!-- The core Firebase JS SDK is always required and must be listed first -->
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-storage.js"></script>
+
+<!-- TODO: Add SDKs for Firebase products that you want to use
+  https://firebase.google.com/docs/web/setup#available-libraries -->
+<script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-analytics.js"></script>
+
+  <!-- Add Firebase products that you want to use -->
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.4.1/firebase-firestore.js"></script>
+<script>
+  // Your web app's Firebase configuration
+  // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+  var firebaseConfig = {
+    apiKey: "AIzaSyB_bf4QWodwBnp3p_m7f-YMj7ysTKZ8wgc",
+    authDomain: "coviassist.firebaseapp.com",
+    databaseURL: "https://coviassist-default-rtdb.firebaseio.com",
+    projectId: "coviassist",
+    storageBucket: "coviassist.appspot.com",
+    messagingSenderId: "1078994958917",
+    appId: "1:1078994958917:web:a6f90cd1d2204e2633412c",
+    measurementId: "G-95VJV43LR3"
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  firebase.analytics();
+</script>
+
+<script>
+  send_msg = (author,user,id)=>{
+    if(document.getElementById('input_msg').value == ''){
+        return
+    }
+    if(user==''){
+      user= 'User'
+    }
+    message = document.getElementById('input_msg').value;
+    current = new Date()
+    date = current.toLocaleString();
+    document.getElementById('input_msg').value = '';
+        firebase.database().ref(`chat/${id}`).push({
+            [user]:message,
+            'time':date,
+
+        })
+  }
+  firebase.database().ref(`chat/{{ object.pk }}`).on('child_added',(child)=>{
+      //isko connect k andr lgana h
+      chat = document.getElementById('msgs');
+      msg = document.createElement('div')
+      msg.setAttribute('class','message mb-1');
+      span = document.createElement('span');
+      span.setAttribute('class','border-bottom p-2 msg-detail')
+      span1= document.createElement('span');
+      span1.setAttribute('class','msg_text')
+      var uname=[]
+      for (var k in child.val()) uname.push(k);
+      uname = uname[0]
+      span.innerText = uname+ " " +child.val().time;
+      span1.innerText= child.val()[uname];     
+      msg.append(span);
+      msg.append(span1)
+      chat.appendChild(msg);
+    })
+    const ref = firebase.storage().ref()
+    name = "{{object.author}}" + "{{object.title}}" + "{{object.content}}".slice(0,10)
+    const task = ref.child(String(name))
+    task.getDownloadURL()
+    .then(url => {
+      img = document.getElementsByClassName('article-img')[0];
+      img.src = url;
+    })
+</script>
+{% endblock chatbox %}
