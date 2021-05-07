@@ -70,7 +70,6 @@ TEMPLATES = [
         },
     },
 ]
-
 WSGI_APPLICATION = 'coviassist.wsgi.application'
 
 
@@ -79,11 +78,14 @@ WSGI_APPLICATION = 'coviassist.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'd1bs6ft7polt3g',
+        'HOST':'ec2-3-215-57-87.compute-1.amazonaws.com',
+        'PORT':5432,
+        'USER':'wtgwjlcfnfselt',
+        'PASSWORD':'476b62b1972d02e69cf58d5cc46af7852eae9d67c12a2a5331b25d8e53cf3dea'
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
