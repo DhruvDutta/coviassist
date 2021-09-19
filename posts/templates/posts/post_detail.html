@@ -105,7 +105,9 @@
       chat.appendChild(msg);
     })
     const ref = firebase.storage().ref()
-    name = "{{object.author}}" + "{{object.title}}" + "{{object.content}}".slice(0,10)
+    name = '{{ object.id }}'
+    console.log(name)
+    /*"{{object.author}}" + "{{object.title}}" + "{{object.content}}".slice(0,10)*/
     const task = ref.child(String(name))
     task.getDownloadURL()
     .then(url => {

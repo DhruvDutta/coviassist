@@ -1,0 +1,111 @@
+{% extends "posts/base.html" %}
+{% block content %}
+<div class="content-section col-md-8 offset-md-2">
+    <form method="POST">
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Get Vaccinated</legend>
+        </fieldset>
+        <label class="p-1">State</label>  
+        <select name="" id="id_of_states" class="input-group mb-3 rounded p-1 d-flex justify-content-center align-items-center border">
+            <option value="">Select State</option>
+        </select>
+        <label class="p-1">City</label>  
+
+        <select name="" id="id_of_cities" class="input-group mb-3 rounded p-1 d-flex justify-content-center align-items-center border">
+            <option value="">Select City</option>
+        </select>
+        <label  class="p-1 col-12"> Date</label>
+        <input type="date" id="start"
+            max="2021-09-22" class="rounded p-1 border">
+
+    </form>
+    <br>
+    <button id="go" class="btn btn-outline-info float-right mb-2 disabled align-items-center justify-content-center" onclick="vac_centers()">Submit</button>
+  </div>
+    <div id = 'vac' class="container d-flex flex-wrap col-md-8" style="justify-content: space-around;">
+        {% comment %} <div class="card col-md-5 mt-1" style="width: 18rem;">
+            <div class="card-body">
+                <h5 class="card-title">Card title</h5>
+                <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div> {% endcomment %}
+    </div>
+<script>
+    fetch('https://cdn-api.co-vin.in/api/v2/admin/location/states')
+    .then(response => response.json())
+    .then((data) => {
+        for(let i=0;i<data['states'].length;i++){
+            var option = document.createElement('option')
+            option.setAttribute('value',`${data['states'][i]['state_id']}`)
+            option.innerText = data['states'][i]['state_name']
+            document.getElementById('id_of_states').appendChild(option)
+        }
+    });
+    document.getElementById('id_of_states').addEventListener("change", ()=>{
+        document.getElementById('id_of_cities').innerHTML = "<option>Select City</option>"
+       fetch(`https://cdn-api.co-vin.in/api/v2/admin/location/districts/${document.getElementById('id_of_states').value}`)
+       .then(response => response.json())
+       .then((data) => {
+        for(let i=0;i<data['districts'].length;i++){
+            var option = document.createElement('option')
+            option.setAttribute('value',`${data['districts'][i]['district_id']}`)
+            option.innerText = data['districts'][i]['district_name']
+            document.getElementById('id_of_cities').appendChild(option)
+        }
+        
+    });
+    });
+    document.getElementById('id_of_cities').addEventListener("change", ()=>{
+        document.getElementById('go').classList.remove('disabled')
+    });
+    vac_centers = () =>{
+        const today = new Date
+        let datenow = document.getElementById('start').value
+        datenow = datenow.split('-')
+        temp = datenow[0]
+        datenow[0] = datenow[2]
+        datenow[2] = temp
+        datenow = datenow.join('-')
+        fetch(`https://cdn-api.co-vin.in/api/v2/appointment/sessions/public/findByDistrict?district_id=${document.getElementById('id_of_cities').value}&date=${datenow}`)
+       .then(response => response.json())
+       .then((data) => {
+           main_con = document.getElementById('vac')
+           for(let i=0;i<data['sessions'].length;i++){
+                container = document.createElement('div')
+                container.setAttribute('class','card col-md-5 mt-2 text-center')
+                container.setAttribute('style',"width: 18rem;")
+                body = document.createElement('div')
+                body.setAttribute('class','card-body')
+                let name = document.createElement('H5')
+                name.class = 'card-title'
+                name.innerText = `${data['sessions'][i]['name']}`
+                body.append(name)
+                address = document.createElement('h6')
+                address.setAttribute('class','card-subtitle mb-2 mt-2 text-muted')
+                address.innerText = `${data['sessions'][i]['address']}`
+                body.appendChild(address)
+                vaccine = document.createElement('h5')
+                vaccine.setAttribute('class','card-title')
+                vaccine.innerText = `Vaccine: ${data['sessions'][i]['vaccine']}`
+                body.appendChild(vaccine)
+                for(let j = 0; j<data['sessions'][i]['slots'].length;j++){
+                    slots = document.createElement('p')
+                    slots.setAttribute('class','card-text')
+                    slots.innerText = `Slot ${j+1}: ${data['sessions'][j]['slots'][j]}`
+                    body.appendChild(slots)
+                }
+                container.appendChild(body)
+                main_con.appendChild(container)
+           } 
+           
+           
+           
+    });
+    }
+    const today = new Date
+    let date_td = today.toLocaleDateString('ko-KR').replaceAll('. ','-').replace('.','')
+    document.getElementById('start').setAttribute('min',`${date_td}`)
+    document.getElementById('start').setAttribute('value',`${date_td}`)
+</script>
+{% endblock content %}

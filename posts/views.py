@@ -11,6 +11,8 @@ from django.views.generic import (
 )
 from .models import Post
 
+def vaccine(request):
+    return render(request, 'posts/vaccine.html')
 
 def home(request):
     context = {
@@ -40,10 +42,14 @@ class PostCreateView(LoginRequiredMixin, CreateView):
         form.instance.phone_number = self.request.user.profile.phone_number
         return super().form_valid(form)
 
+    def get_context_data(self, **kwargs):
+        ctx = super(PostCreateView, self).get_context_data(**kwargs)
+        ctx['last_id'] = Post.objects.latest('id')
+        return ctx
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Post
-    fields = ['title', 'content']
+    fields = ['title','content']
 
     def form_valid(self, form):
         form.instance.author = self.request.user

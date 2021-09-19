@@ -5,14 +5,14 @@
         <form method="POST" onsubmit="return validate()">
             {% csrf_token %}
             <fieldset class="form-group">
-                <legend class="border-bottom mb-4">New Post</legend>
+                <legend class="border-bottom mb-4">Post</legend>
                 {{ form|crispy }}
             </fieldset>
-            <fieldset>
+            <fieldset id="img_no_update">
                 <input type="file" id="image" accept="image/jpg, image/jpeg, image/png" >
             </fieldset>
             <div class="form-group">
-                <button class="btn btn-outline-info" type="submit">Post</button>
+                <button class="btn btn-outline-info float-right mb-2" type="submit">Post</button>
             </div>
         </form>
     </div>
@@ -55,6 +55,7 @@
                 }
             });
             if(isOk){
+                
                 const ref = firebase.storage().ref()
                 var file = document.getElementById('image').files[0]
                 const metadata= {
@@ -63,13 +64,18 @@
                 var title = document.getElementById('id_title').value
                 var content = document.getElementById('id_content').value
                 var uname = '{{ user }}'
-                var name = uname+title+content.slice(0,10);
-                console.log(name)
+                var name = parseInt('{{last_id.id}}')+1
+                var next_post_id = parseInt(name)+1
                 const task = ref.child(String(name)).put(file,metadata)
                 //task.then(snapshot => snapshot.ref.getDownloadURL())
                 //.then(url => console.log(url))
             }
             return isOk;
+          }
+          var currentUrl = window.location.href;
+          currentUrl = currentUrl.split('/');
+          if(currentUrl.includes('update')){
+              document.getElementById('img_no_update').remove()
           }
       </script>
 {% endblock content %}
