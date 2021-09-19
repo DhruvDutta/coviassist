@@ -39,7 +39,7 @@
             <div class="navbar-nav">
               {% if user.is_authenticated %}
               <div class="dropdown show">
-                <a class="nav-item nav-link btn dropdown-toggle  class='dropmenu' href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.username }}</a>         
+                <a class="nav-item nav-link btn dropdown-toggle"  class='dropmenu' href="#" role="button" id="dropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">{{ user.username }}</a>         
                 <div class="dropdown-menu" aria-labelledby="dropdownMenuLink">
                   <a class="dropdown-item ditem" href="{% url 'post-create' %}"><i class="fa fa-plus" style="font-size: 0.8em;"></i> New Post </a>
                   <a class="dropdown-item ditem text-danger" href="{% url 'logout' %}">Logout</a>
@@ -74,8 +74,8 @@
           {% block chatbox %}{% endblock %}
       </div>
       <div class="row">
-        <div class="col-md-8 offset-md-2 d-flex justify-content-center align-items-center mt-5">
-            <div class="text-muted border-bottom">Pull a prank on coronavirus by getting vaccinated</div>
+        <div class="col-md-8 offset-md-2 d-flex justify-content-center align-items-center mt-4">
+            <div class="text-muted border-bottom mb-4">Pull a prank on coronavirus by getting vaccinated</div>
         </div>
       </div>
     </main>
