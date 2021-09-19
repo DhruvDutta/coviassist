@@ -22,14 +22,13 @@
     <br>
     <button id="go" class="btn btn-outline-info float-right mb-2 disabled align-items-center justify-content-center" onclick="vac_centers()">Submit</button>
   </div>
-    <div id = 'vac' class="container d-flex flex-wrap col-md-8" style="justify-content: space-around;">
-        {% comment %} <div class="card col-md-5 mt-1" style="width: 18rem;">
-            <div class="card-body">
-                <h5 class="card-title">Card title</h5>
-                <h6 class="card-subtitle mb-2 text-muted">Card subtitle</h6>
-                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
-            </div>
-        </div> {% endcomment %}
+    <div class="content-section col-md-8 offset-md-2">
+        <fieldset class="form-group">
+            <legend class="border-bottom mb-4">Available Centers</legend>
+        </fieldset>
+        <div class="row" id="vac">
+
+        </div>
     </div>
 <script>
     fetch('https://cdn-api.co-vin.in/api/v2/admin/location/states')
@@ -71,30 +70,45 @@
        .then(response => response.json())
        .then((data) => {
            main_con = document.getElementById('vac')
+           console.log(data['sessions'])
+
            for(let i=0;i<data['sessions'].length;i++){
                 container = document.createElement('div')
-                container.setAttribute('class','card col-md-5 mt-2 text-center')
-                container.setAttribute('style',"width: 18rem;")
+                container.setAttribute('class','col-md-6 p-1')
                 body = document.createElement('div')
-                body.setAttribute('class','card-body')
-                let name = document.createElement('H5')
-                name.class = 'card-title'
+                body.setAttribute('class','border rounded p-2')
+                let name = document.createElement('div')
+                name.setAttribute('class','card-title border-bottom h6')
                 name.innerText = `${data['sessions'][i]['name']}`
                 body.append(name)
-                address = document.createElement('h6')
-                address.setAttribute('class','card-subtitle mb-2 mt-2 text-muted')
-                address.innerText = `${data['sessions'][i]['address']}`
+                address = document.createElement('div')
+                address.setAttribute('class','card-subtitle my-2 text-muted')
+                address.innerHTML = `<i class="bi bi-geo-alt-fill"></i> ${data['sessions'][i]['address']}`
                 body.appendChild(address)
-                vaccine = document.createElement('h5')
+                vaccine = document.createElement('div')
                 vaccine.setAttribute('class','card-title')
-                vaccine.innerText = `Vaccine: ${data['sessions'][i]['vaccine']}`
+                vaccine.innerHTML = `<span class='text-muted'>Vaccine -</span> ${data['sessions'][i]['vaccine']}`
                 body.appendChild(vaccine)
+                body.innerHTML+=  `<label class='col-12 h6 text-muted'>Slots</label>`
+                var slot_table = document.createElement('table')
+                slot_table.setAttribute('class','table table-hover')
+                slot_table.innerHTML = `<thead class='table-light'>
+                            <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Time</th>
+                            </tr>
+                        </thead>`
+                var tbody = document.createElement('tbody')
                 for(let j = 0; j<data['sessions'][i]['slots'].length;j++){
-                    slots = document.createElement('p')
+                    slots = document.createElement('tr')
                     slots.setAttribute('class','card-text')
-                    slots.innerText = `Slot ${j+1}: ${data['sessions'][j]['slots'][j]}`
-                    body.appendChild(slots)
+                    slots.innerHTML = `
+                            <th scope="row">${j+1}</th>
+                            <td>${data['sessions'][i]['slots'][j]}</td>`
+                    tbody.appendChild(slots)
                 }
+                slot_table.appendChild(tbody)
+                body.appendChild(slot_table)
                 container.appendChild(body)
                 main_con.appendChild(container)
            } 
