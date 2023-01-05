@@ -44,7 +44,11 @@ class PostCreateView(LoginRequiredMixin, CreateView):
 
     def get_context_data(self, **kwargs):
         ctx = super(PostCreateView, self).get_context_data(**kwargs)
-        ctx['last_id'] = Post.objects.latest('id')
+        try:
+            ctx['last_id'] = Post.objects.latest('id')
+        except Post.DoesNotExist:
+            ctx['last_id'] = 0
+        
         return ctx
 
 class PostUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):

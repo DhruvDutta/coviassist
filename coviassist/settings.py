@@ -12,7 +12,8 @@ https://docs.djangoproject.com/en/3.2/ref/settings/
 
 from pathlib import Path
 import os
-
+import dj_database_url
+from decouple import config
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -77,6 +78,19 @@ WSGI_APPLICATION = 'coviassist.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/3.2/ref/settings/#databases
 
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'znxcqjsd',
+        'HOST':'john.db.elephantsql.com',
+        'PORT':5432,
+        'USER':'znxcqjsd',
+        'PASSWORD':'1xhdMs025sN1NzBe_5CM-CkMNI1B6R2q'
+    }
+}
+
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -87,7 +101,7 @@ DATABASES = {
         'PASSWORD':'476b62b1972d02e69cf58d5cc46af7852eae9d67c12a2a5331b25d8e53cf3dea'
     }
 }
-
+'''
 # Password validation
 # https://docs.djangoproject.com/en/3.2/ref/settings/#auth-password-validators
 
@@ -126,6 +140,7 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 STATIC_ROOT =  os.path.join(BASE_DIR,'staticfiles')
+#STATIC_ROOT = BASE_DIR / "staticfiles_build" / "static"
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
